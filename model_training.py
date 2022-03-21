@@ -1,4 +1,3 @@
-from curses import raw
 import sklearn.metrics as metrics
 import matplotlib as mpl
 from matplotlib import pyplot as plt
@@ -6,11 +5,14 @@ import math
 from keras.models import Sequential
 from keras.layers.recurrent import LSTM
 from keras.layers import Dense, Dropout, Activation
+import keras.backend as K
 import warnings
 import numpy as np
 import pandas as pd
-from data_processing import data_processing
 warnings.filterwarnings("ignore")
+
+from data_processing import data_processing
+# from result_metrics import _r2
 
 # ------------------------------------------------------This is a split line----
 
@@ -75,15 +77,19 @@ def __raw_regression_model():
 
 def _regression_training(X_train, y_train):
     
-    # import keras.backend as K
     # def r2(y_true, y_pred):
+    
+    #     # y_true = K.constant(y_true)
+    #     # y_pred = K.constant(y_pred)
+        
     #     a = K.square(y_pred - y_true)
     #     b = K.sum(a)
     #     c = K.mean(y_true)
     #     d = K.square(y_true - c)
     #     e = K.sum(d)
-    #     f = 1 - b/e
-    #     return f
+    #     r2 = 1 - b/e
+        
+    #     return r2
     
     model = __raw_regression_model()
     
@@ -112,10 +118,10 @@ def model_training(train_path: str, test_path: str, lags: int) -> Sequential:
     X_train, y_train, _, _, _ = data_processing(train_path, test_path, lags)
     X_train_lstm = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
-    model_lstm = _lstm_training(X_train_lstm, y_train)
+    # model_lstm = _lstm_training(X_train_lstm, y_train)
     model_regression = _regression_training(X_train, y_train)
     
-    return model_lstm, model_regression
+    return model_regression
 
 
 if __name__ == '__main__':

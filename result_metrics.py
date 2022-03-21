@@ -5,6 +5,7 @@ from matplotlib import pyplot as plt
 import matplotlib as mpl
 
 import sklearn.metrics as metrics
+# import keras.backend as K
 
 # ------------------------------------------------------This is a split line----
 
@@ -35,6 +36,21 @@ def _MAPE(y_true, y_pred) -> float:
     return mape
 
 
+# def _r2(y_true, y_pred):
+    
+#     y_true = K.constant(y_true)
+#     y_pred = K.constant(y_pred)
+    
+#     a = K.square(y_pred - y_true)
+#     b = K.sum(a)
+#     c = K.mean(y_true)
+#     d = K.square(y_true - c)
+#     e = K.sum(d)
+#     r2 = 1 - b/e
+    
+#     return r2
+
+
 def eva_regress(y_true, y_pred):
     """Evaluation
     evaluate the predicted result
@@ -45,6 +61,7 @@ def eva_regress(y_true, y_pred):
     """
 
     mape = _MAPE(y_true, y_pred)
+    # r2 = _r2(y_true, y_pred)
     vs = metrics.explained_variance_score(y_true, y_pred)
     mae = metrics.mean_absolute_error(y_true, y_pred)
     mse = metrics.mean_squared_error(y_true, y_pred)
@@ -56,6 +73,7 @@ def eva_regress(y_true, y_pred):
     print('mse:%f' % mse)
     print('rmse:%f' % math.sqrt(mse))
     print('r2:%f' % r2)
+    print("\n")
 
 
 def plot_results(y_true, y_preds, names):
@@ -69,7 +87,8 @@ def plot_results(y_true, y_preds, names):
     """
     d = '2016-3-5 00:00'
     # d = '2021-3-10 00:00'
-    x = pd.date_range(d, periods=289, freq='5min')
+    periods = 289
+    x = pd.date_range(d, periods=periods, freq='5min')
 
     fig = plt.figure()
     ax = fig.add_subplot(111)

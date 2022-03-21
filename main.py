@@ -2,6 +2,7 @@ from timeit import timeit
 import warnings
 import numpy as np
 import pandas as pd
+from matplotlib import pyplot as plt
 from keras.models import load_model
 warnings.filterwarnings("ignore")
 
@@ -40,13 +41,13 @@ def predict_and_evaluate(train_path, test_path, lags):
     
     plot_results(y_test[288:288+289], y_lstm_predict, ['LSTM'])
     
-    regression_predicted = lstm.predict(X_test)
+    regression_predicted = regression.predict(X_test)
     regression_predicted = scaler.inverse_transform(regression_predicted.reshape(-1, 1)).reshape(1, -1)[0]
 
-    y_regression_predict.append(regression_predicted[288+289:288+289+289])
+    y_regression_predict.append(regression_predicted[288:288+289])
     eva_regress(y_test, regression_predicted)
     
-    plot_results(y_test[288+289:288+289+289], y_regression_predict, ['REGRESSION'])
+    plot_results(y_test[288:288+289], y_regression_predict, ['REGRESSION'])
     
     
 def main():
