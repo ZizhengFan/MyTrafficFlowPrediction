@@ -1,3 +1,4 @@
+from timeit import timeit
 import warnings
 import numpy as np
 import pandas as pd
@@ -20,24 +21,34 @@ def predict_and_evaluate(train_path, test_path, lags):
     """
     
     # Here to determine if you want to retrain the model or just use the existing one
-    # lstm = model_training(train_path, test_path, lags)
-    lstm = load_model('model/lstm_model_correct.h5')
+    # lstm, regression = model_training(train_path, test_path, lags)
     
-    y_predict = []
+    lstm = load_model('model/lstm_model_correct.h5')
+    regression = load_model('model/regression_model.h5')
+    
+    y_lstm_predict, y_regression_predict= [], []
     
     _, _, X_test, y_test, scaler = data_processing(train_path, test_path, lags)
     X_test = np.reshape(X_test, (X_test.shape[0], X_test.shape[1], 1))
     y_test = scaler.inverse_transform(y_test.reshape(-1, 1)).reshape(1, -1)[0]
     
-    predicted = lstm.predict(X_test)
-    predicted = scaler.inverse_transform(predicted.reshape(-1, 1)).reshape(1, -1)[0]
+    lstm_predicted = lstm.predict(X_test)
+    lstm_predicted = scaler.inverse_transform(lstm_predicted.reshape(-1, 1)).reshape(1, -1)[0]
 
-    y_predict.append(predicted[288:288+289])
-    eva_regress(y_test, predicted)
+    y_lstm_predict.append(lstm_predicted[288:288+289])
+    eva_regress(y_test, lstm_predicted)
     
-    plot_results(y_test[288:288+289], y_predict, ['LSTM'])
+    plot_results(y_test[288:288+289], y_lstm_predict, ['LSTM'])
     
+    regression_predicted = lstm.predict(X_test)
+    regression_predicted = scaler.inverse_transform(regression_predicted.reshape(-1, 1)).reshape(1, -1)[0]
 
+    y_regression_predict.append(regression_predicted[288+289:288+289+289])
+    eva_regress(y_test, regression_predicted)
+    
+    plot_results(y_test[288+289:288+289+289], y_regression_predict, ['REGRESSION'])
+    
+    
 def main():
     train_path = 'data/train.csv'
     test_path = 'data/test.csv'

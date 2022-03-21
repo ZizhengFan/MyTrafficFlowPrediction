@@ -145,7 +145,7 @@ def data_processing(train_path: str, test_path: str, lags: int) -> tuple[np.ndar
 
     df_train, df_test = _data_reading(train_path, test_path)
 
-    _data_checking(df_train, df_test)
+    # _data_checking(df_train, df_test)
 
     flow_train, flow_test, scaler = _data_scaler(df_train, df_test)
 

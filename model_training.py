@@ -1,3 +1,4 @@
+from curses import raw
 import sklearn.metrics as metrics
 import matplotlib as mpl
 from matplotlib import pyplot as plt
@@ -61,12 +62,38 @@ def _lstm_training(X_train, y_train) -> Sequential:
     return model
 
 
-def __linear_regression():
-    pass
+def __raw_regression_model():
+    
+    raw_regression_model = Sequential()
+    
+    raw_regression_model.add(Dense(64, activation="relu", input_dim=12))
+    # raw_regression_model.add(Dense(64, activation="relu"))
+    raw_regression_model.add(Dense(32, activation="relu"))
+    raw_regression_model.add(Dense(1))
+    
+    return raw_regression_model
 
-
-def _linear_regression_training():
-    pass
+def _regression_training(X_train, y_train):
+    
+    # import keras.backend as K
+    # def r2(y_true, y_pred):
+    #     a = K.square(y_pred - y_true)
+    #     b = K.sum(a)
+    #     c = K.mean(y_true)
+    #     d = K.square(y_true - c)
+    #     e = K.sum(d)
+    #     f = 1 - b/e
+    #     return f
+    
+    model = __raw_regression_model()
+    
+    model.compile(loss='mse', optimizer='rmsprop', metrics=['mae'])
+    
+    model.fit(X_train, y_train, batch_size=256, epochs=600)
+    
+    model.save("model/regression_model.h5")
+    
+    return model
 
 
 def model_training(train_path: str, test_path: str, lags: int) -> Sequential:
@@ -85,9 +112,10 @@ def model_training(train_path: str, test_path: str, lags: int) -> Sequential:
     X_train, y_train, _, _, _ = data_processing(train_path, test_path, lags)
     X_train_lstm = np.reshape(X_train, (X_train.shape[0], X_train.shape[1], 1))
 
-    model = _lstm_training(X_train_lstm, y_train)
-
-    return model
+    model_lstm = _lstm_training(X_train_lstm, y_train)
+    model_regression = _regression_training(X_train, y_train)
+    
+    return model_lstm, model_regression
 
 
 if __name__ == '__main__':
