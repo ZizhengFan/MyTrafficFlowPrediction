@@ -1,4 +1,3 @@
-from timeit import timeit
 import warnings
 import numpy as np
 import pandas as pd
@@ -39,7 +38,7 @@ def predict_and_evaluate(train_path, test_path, lags):
     y_lstm_predict.append(lstm_predicted[288:288+289])
     eva_regress(y_test, lstm_predicted)
     
-    plot_results(y_test[288:288+289], y_lstm_predict, ['LSTM'])
+    # plot_results(y_test[288:288+289], y_lstm_predict, ['LSTM'])
     
     regression_predicted = regression.predict(X_test)
     regression_predicted = scaler.inverse_transform(regression_predicted.reshape(-1, 1)).reshape(1, -1)[0]
@@ -47,8 +46,21 @@ def predict_and_evaluate(train_path, test_path, lags):
     y_regression_predict.append(regression_predicted[288:288+289])
     eva_regress(y_test, regression_predicted)
     
-    plot_results(y_test[288:288+289], y_regression_predict, ['REGRESSION'])
+    # plot_results(y_test[288:288+289], y_regression_predict, ['REGRESSION'])
     
+    plt.figure("LSTM General", figsize=(12, 8))   
+    for i in range(6):
+        plt.subplot(2, 3, i+1)
+        plt.plot(y_test[i*289:(i+1)*289], label='real')
+        plt.plot(lstm_predicted[i*289:(i+1)*289], label='LSTM')
+    plt.show()
+    
+    plt.figure("Regression General", figsize=(12, 8))   
+    for i in range(6):
+        plt.subplot(2, 3, i+1)
+        plt.plot(y_test[i*289:(i+1)*289], label='real')
+        plt.plot(regression_predicted[i*289:(i+1)*289], label='LSTM')
+    plt.show()
     
 def main():
     train_path = 'data/train.csv'
